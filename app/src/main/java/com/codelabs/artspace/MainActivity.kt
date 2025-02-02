@@ -4,13 +4,38 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.focusModifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.codelabs.artspace.ui.theme.ArtSpaceTheme
 
 class MainActivity : ComponentActivity() {
@@ -20,23 +45,13 @@ class MainActivity : ComponentActivity() {
         setContent {
             ArtSpaceTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                    AppLayout(modifier = Modifier.padding(innerPadding).background(Color(0xFFF6F4E9)))
                 }
             }
         }
     }
 }
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
 
 @Preview(showBackground = true)
 @Composable
@@ -47,11 +62,115 @@ fun GreetingPreview() {
 }
 
 @Composable
-fun AppLayout(){
-
+fun AppLayout(modifier:Modifier = Modifier){
+    Column(modifier = modifier,
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+        AppBanner(modifier = Modifier.fillMaxWidth()
+            .weight(0.3f)
+            .background(Color.White)
+        )
+        PresentationCanvas(modifier = Modifier.weight(3f))
+        Spacer(Modifier.height(40.dp))
+        ButtonBar(modifier = Modifier.fillMaxWidth().weight(1f))
+    }
 }
 
 @Composable
-fun ButtonBar(){
+fun ButtonBar(modifier: Modifier = Modifier){
+    Row(modifier = modifier,
+        horizontalArrangement = Arrangement.SpaceBetween){
+        ImageControlButton(
+            label = "Previa",
+            onClick = {},
+            modifier = Modifier
+            .padding(horizontal = 20.dp)
+            .weight(1f)
+        )
 
+        ImageControlButton(
+            label = "Siguiente",
+            onClick = {},
+            modifier = Modifier
+                .padding(horizontal = 20.dp)
+                .weight(1f)
+        )
+
+    }
+}
+
+@Composable
+fun ImageControlButton(modifier:Modifier = Modifier, label: String, onClick: () -> Unit){
+    Button(
+        modifier = modifier,
+        onClick = onClick,
+        colors = ButtonColors(
+            containerColor = Color(0xFF0E1428),
+            contentColor = Color.White,
+            disabledContentColor = Color.White,
+            disabledContainerColor = Color.Gray
+        )
+    ) {
+        Text(
+            text = label,
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold
+        )
+    }
+}
+
+@Composable
+fun PresentationCanvas(modifier:Modifier = Modifier){
+    Column (modifier = modifier) {
+        Image(
+            painter = painterResource(R.drawable.img_1),
+            contentDescription = null,
+            modifier = Modifier.weight(2f),
+            contentScale = ContentScale.Crop
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        ImageDescription(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(0.2f)
+        )
+    }
+}
+
+@Composable
+fun ImageDescription (modifier: Modifier = Modifier){
+    Column(modifier = modifier) {
+        Text(
+            text = "Titulo: aux champs-Elyseés",
+            color = Color.Black,
+            fontStyle = FontStyle.Italic,
+            fontSize = 20.sp
+        )
+        Text(
+            text = "Paris, France",
+            color = Color.Black,
+            fontWeight = FontWeight.Bold
+        )
+    }
+}
+
+@Composable
+fun AppBanner (modifier:Modifier = Modifier){
+    val iconsSet = Icons.Filled
+    Row (modifier = modifier, horizontalArrangement = Arrangement.Start) {
+        Icon(
+            iconsSet.Menu,
+            contentDescription = "three bar stacked, touch this to get a menu displayed",
+            Modifier.padding(10.dp).size(40.dp),
+            tint = Color.Black
+        )
+        Text(
+            text = "ArtSpace",
+            fontSize = 28.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color.Black,
+            modifier = Modifier.padding(horizontal = 10.dp, vertical = 10.dp)
+        )
+    }
 }
