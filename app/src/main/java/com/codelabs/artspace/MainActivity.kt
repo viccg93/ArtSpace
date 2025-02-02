@@ -4,13 +4,13 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -24,13 +24,15 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -63,6 +65,14 @@ fun GreetingPreview() {
 
 @Composable
 fun AppLayout(modifier:Modifier = Modifier){
+    //app logic
+    var state by remember { mutableStateOf(0) }
+    val slides = populateList()
+
+    val currentSlide = slides.get(state)
+
+
+
     Column(modifier = modifier,
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
@@ -71,19 +81,25 @@ fun AppLayout(modifier:Modifier = Modifier){
             .weight(0.3f)
             .background(Color.White)
         )
-        PresentationCanvas(modifier = Modifier.weight(3f))
+        PresentationCanvas(imageSlide = currentSlide, modifier = Modifier.weight(3f))
         Spacer(Modifier.height(40.dp))
-        ButtonBar(modifier = Modifier.fillMaxWidth().weight(1f))
+        ButtonBar(
+            onclickPrev = {if(state > 0){state--}else{ state = 4}},
+            onclickPost = {if(state < 4){state++}else{state = 0 }},
+            modifier = Modifier.fillMaxWidth().weight(1f))
     }
 }
 
 @Composable
-fun ButtonBar(modifier: Modifier = Modifier){
+fun ButtonBar(
+    onclickPrev: () -> Unit,
+    onclickPost: () -> Unit,
+    modifier: Modifier = Modifier){
     Row(modifier = modifier,
         horizontalArrangement = Arrangement.SpaceBetween){
         ImageControlButton(
             label = "Previa",
-            onClick = {},
+            onClick = onclickPrev,
             modifier = Modifier
             .padding(horizontal = 20.dp)
             .weight(1f)
@@ -91,7 +107,7 @@ fun ButtonBar(modifier: Modifier = Modifier){
 
         ImageControlButton(
             label = "Siguiente",
-            onClick = {},
+            onClick = onclickPost,
             modifier = Modifier
                 .padding(horizontal = 20.dp)
                 .weight(1f)
@@ -121,16 +137,18 @@ fun ImageControlButton(modifier:Modifier = Modifier, label: String, onClick: () 
 }
 
 @Composable
-fun PresentationCanvas(modifier:Modifier = Modifier){
+fun PresentationCanvas(imageSlide: ImageSlide, modifier:Modifier = Modifier){
     Column (modifier = modifier) {
         Image(
-            painter = painterResource(R.drawable.img_1),
+            painter = painterResource(imageSlide.id),
             contentDescription = null,
             modifier = Modifier.weight(2f),
             contentScale = ContentScale.Crop
         )
         Spacer(modifier = Modifier.height(8.dp))
         ImageDescription(
+            title = imageSlide.title,
+            author = imageSlide.author,
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(0.2f)
@@ -139,16 +157,16 @@ fun PresentationCanvas(modifier:Modifier = Modifier){
 }
 
 @Composable
-fun ImageDescription (modifier: Modifier = Modifier){
+fun ImageDescription (title: String, author: String, modifier: Modifier = Modifier){
     Column(modifier = modifier) {
         Text(
-            text = "Titulo: aux champs-Elyseés",
+            text = "Titulo: $title",
             color = Color.Black,
             fontStyle = FontStyle.Italic,
             fontSize = 20.sp
         )
         Text(
-            text = "Paris, France",
+            text = author,
             color = Color.Black,
             fontWeight = FontWeight.Bold
         )
@@ -173,4 +191,18 @@ fun AppBanner (modifier:Modifier = Modifier){
             modifier = Modifier.padding(horizontal = 10.dp, vertical = 10.dp)
         )
     }
+}
+
+class ImageSlide(@DrawableRes val id: Int, val title: String, val author: String) {
+}
+
+fun populateList ():  ArrayList<ImageSlide>{
+    var slides = ArrayList<ImageSlide>()
+    slides.add(ImageSlide(R.drawable.img_1, "Photograps","BP Miller"))
+    slides.add(ImageSlide(R.drawable.img_2, "A nice trip","Ivan Diaz"))
+    slides.add(ImageSlide(R.drawable.img_3, "Camera, action!","Vika Strawberrika"))
+    slides.add(ImageSlide(R.drawable.img_4, "Sunset","Clara Metivier"))
+    slides.add(ImageSlide(R.drawable.img_5, "White horse","Nachelle Nocom"))
+    return slides
+
 }
